@@ -71,6 +71,32 @@ void initFolder() {
     fwrite((long int *)&count, sizeof(long), 1, f);
     fclose(f);
 }
+
+void deleteFile(int pos) {
+    const char * FILE_NAME=".todo/index";
+    long int count;
+
+    FILE * f = fopen(FILE_NAME, "rb");
+    fread(&count, sizeof(long int), 1, f);
+
+    long int data[count];
+    
+    fread(&data, sizeof(long int), count, f);
+    fclose(f);
+    if(pos<1 || pos>count) {
+        printf("%d doesn't exists\n", pos);
+    }
+    else {
+        char * name=malloc(sizeof(char)*20);
+        sprintf(name, ".todo/%ld", data[pos-1]);
+        remove(name);
+        printf("%s\n", name);
+        count--;
+        data[pos-1]=data[count];
+        _updateIndex(&count, data);
+    }
+}
+
 void _updateIndex(long * val, long int * data[]) {
     const char * FILE_NAME=".todo/index";
     FILE * f = fopen(FILE_NAME, "wb");
